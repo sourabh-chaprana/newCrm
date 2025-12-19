@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginUser } from '../Action/auth/auth.thunk';
+import { registerUser } from '../Action/auth/auth.thunk';
 
-const LoginPage = () => {
+const RegisterPage = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('agent');
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(loginUser({ email, password }));
-    if (loginUser.fulfilled.match(result)) {
+    const result = await dispatch(registerUser({ name, email, password, role }));
+    if (registerUser.fulfilled.match(result)) {
       navigate('/dashboard');
     }
   };
@@ -32,11 +35,26 @@ const LoginPage = () => {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">KYC Verification</h1>
-          <p className="text-gray-600 mt-2">Agent Portal</p>
+          <h1 className="text-3xl font-bold text-gray-800">Create Agent Account</h1>
+          <p className="text-gray-600 mt-2">Register to access the KYC Verification Portal</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 outline-none transition shadow-sm hover:shadow-md"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
@@ -62,9 +80,24 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 outline-none transition shadow-sm hover:shadow-md"
-              placeholder="Enter your password"
+              placeholder="Create a password"
               required
             />
+          </div>
+
+          <div>
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+              Role
+            </label>
+            <select
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 outline-none transition shadow-sm hover:shadow-md bg-white"
+            >
+              <option value="agent">Agent</option>
+              <option value="admin">Admin</option>
+            </select>
           </div>
 
           {error && (
@@ -78,14 +111,14 @@ const LoginPage = () => {
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3.5 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transform hover:scale-[1.02]"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Creating account...' : 'Register'}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
-            Create an account
+          Already have an account?{' '}
+          <Link to="/" className="text-blue-600 hover:text-blue-700 font-medium">
+            Login here
           </Link>
         </p>
       </div>
@@ -93,5 +126,5 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
 
